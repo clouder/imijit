@@ -1,0 +1,20 @@
+-#- content_for :javascripts do
+-#  = javascript_include_tag 'jcrop/jquery.Jcrop.min.js', 'crop_image.js'
+-#- content_for :stylesheets do
+-#  = stylesheet_link_tag 'jcrop/jquery.Jcrop.css'
+-#
+-#= image_tag @image.url, :id => 'jcropper'
+-#- form_for [@group, @image] do |f|
+-#  = f.text_field :geometry
+-#  = f.submit 'Update'
+- content_for :stylesheets do
+  = stylesheet_link_tag 'groups'
+
+%h2= @group.name
+
+#main= main_image @group
+
+%ul#images
+  - for image in @group.images
+    %li[image]
+      = link_to image_tag(image.url('thumb')), group_image_url(@group, image)

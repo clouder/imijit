@@ -1,0 +1,11 @@
+- content_for :stylesheets do
+  = stylesheet_link_tag 'groups'
+
+%h2= @group.name
+
+#main= main_image @group
+
+%ul#images
+  - for image in @group.images
+    %li[image]
+      = link_to image_tag(image.url('thumb')), group_image_url(@group, image)

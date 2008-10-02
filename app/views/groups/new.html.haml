@@ -1,0 +1,5 @@
+%h2 Add New Group
+= error_messages_for :group
+- form_for :group, :url => { :action => 'create' } do |f|
+  = f.text_field :name
+  = f.submit 'Create Group'

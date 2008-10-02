@@ -1,0 +1,8 @@
+- content_for :stylesheets do
+  = stylesheet_link_tag 'groups'
+
+%h2 Groups
+%ul#groups
+  - for group in @groups
+    %li[group]
+      = link_to_group group

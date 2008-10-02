@@ -1,0 +1,18 @@
+ul#groups {
+  float: left; }
+  ul#groups li.group {
+    float: left;
+    margin: .5em; }
+    ul#groups li.group img {
+      width: 10em;
+      height: 10em; }
+
+#main {
+  text-align: center; }
+
+#images .image {
+  float: left;
+  margin: .5em; }
+  #images .image img {
+    width: 10em;
+    height: 10em; }

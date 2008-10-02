@@ -1,0 +1,24 @@
+ul#groups {
+  clear: both;
+  float: left;
+  margin: 0 1em 1em 1em;
+  text-align: center; }
+  ul#groups li.group {
+    float: left;
+    width: 12em; }
+    ul#groups li.group h3 {
+      height: 1.5em;
+      font-size: 123.1%;
+      font-weight: bold;
+      overflow: hidden; }
+      ul#groups li.group h3 a {
+        color: #eee; }
+    ul#groups li.group a {
+      font-size: 108%;
+      font-weight: bold;
+      display: block; }
+      ul#groups li.group a img {
+        display: block;
+        margin: 0 auto;
+        width: 10em;
+        height: 10em; }

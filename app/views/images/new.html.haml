@@ -1,0 +1,11 @@
+%h2== New Image Form for #{@group.name}
+
+= error_messages_for :image
+
+- form_for :image, :url => { :action => 'create', :group_id => @group }, :html => { :multipart => true } do |f|
+  %ul
+    %li
+      = f.label :upload, 'Image'
+      = f.file_field :upload
+    %li
+      = f.submit 'Add Image'

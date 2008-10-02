@@ -1,0 +1,31 @@
+p#change_group_name {
+  margin-top: 1.5em; }
+
+div#main_image {
+  clear: both;
+  text-align: center; }
+  div#main_image ul.controls {
+    font-size: 108%;
+    font-weight: bold; }
+    div#main_image ul.controls li {
+      float: left;
+      width: 33%;
+      margin-bottom: 1em;
+      color: #555; }
+
+ul#images {
+  clear: both;
+  float: left; }
+  ul#images li.image {
+    float: left;
+    margin: .5em; }
+    ul#images li.image a {
+      font-size: 108%;
+      font-weight: bold;
+      display: block;
+      text-align: center; }
+      ul#images li.image a img {
+        display: block;
+        width: 10em;
+        height: 10em;
+        margin-bottom: .5em; }
