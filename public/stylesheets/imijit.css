@@ -1,16 +1,39 @@
 html {
-  background-color: #dace9a; }
+  background-color: #242424;
+  color: white; }
+
+a {
+  text-decoration: none;
+  color: #8AC6F2; }
+
+a:hover {
+  text-decoration: underline; }
 
 h1 {
   font-size: 197%;
   font-weight: bold;
-  background: #a68f63;
+  background-color: #CAE682;
   padding: .25em; }
   h1 a {
-    color: black;
-    text-decoration: none; }
+    text-decoration: none;
+    color: #242424; }
 
 h2 {
+  clear: both;
+  float: left;
   font-size: 167%;
-  padding: .25em .5em;
-  font-weight: bold; }
+  font-weight: bold;
+  color: #95E454;
+  padding: .5em; }
+
+form {
+  clear: both; }
+  form ul {
+    float: left;
+    background-color: #404040;
+    margin: 0 2em;
+    padding: 1em; }
+    form ul li {
+      font-size: 123%;
+      font-weight: bold;
+      padding: .25em 0; }

@@ -7,19 +7,21 @@ vmap [% [%m'gv``
 vmap ]% ]%m'gv``
 vmap a% [%v]%
 nmap gx <Plug>NetrwBrowseX
-nnoremap <silent> <Plug>NetrwBrowseX :call netrw#NetBrowseX(expand("<cWORD>"),0)
+nnoremap <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand("<cWORD>"),0)
 map <S-Insert> <MiddleMouse>
 let &cpo=s:cpo_save
 unlet s:cpo_save
 set autoindent
 set background=dark
 set backspace=indent,eol,start
+set completefunc=syntaxcomplete#Complete
 set directory=~/tmp
 set expandtab
 set fileencodings=ucs-bom,utf-8,default,latin1
 set guifont=DejaVu\ Sans\ Mono\ Bold\ 11
 set guioptions=agimtT
 set helplang=en
+set iskeyword=@,48-57,_,192-255,$
 set mouse=a
 set printoptions=paper:letter
 set ruler
@@ -37,40 +39,15 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +48 app/models/image.rb
-badd +18 app/controllers/images_controller.rb
-badd +1 app/views/groups/index.html.haml
-badd +13 app/views/layouts/application.html.haml
-badd +15 public/stylesheets/sass/imijit.sass
-badd +2 public/stylesheets/sass/groups.sass
-badd +11 app/views/groups/show.html.haml
-badd +2 app/controllers/groups_controller.rb
-badd +12 app/helpers/groups_helper.rb
-badd +11 app/views/images/index.html.haml
-badd +20 app/views/images/show.html.haml
-badd +55 config/routes.rb
-badd +3 app/helpers/application_helper.rb
-badd +5 app/controllers/application.rb
-badd +10 app/helpers/images_helper.rb
-badd +63 app/controllers/admin/groups_controller.rb
-badd +14 app/views/admin/groups/index.html.haml
-badd +4 app/helpers/admin/groups_helper.rb
-badd +13 app/views/admin/groups/new.html.haml
-badd +41 app/controllers/admin/images_controller.rb
-badd +8 app/views/layouts/admin.html.haml
-badd +18 public/stylesheets/sass/admin/groups.sass
-badd +34 public/stylesheets/sass/admin/imijit.sass
-badd +5 app/helpers/admin/images_helper.rb
-badd +12 app/views/admin/images/index.html.haml
-badd +18 app/views/admin/images/show.html.haml
-badd +31 public/stylesheets/sass/admin/images.sass
-badd +12 public/javascripts/crop_image.js
-badd +14 app/views/admin/images/new.html.haml
-badd +11 app/views/admin/images/edit.html.haml
-badd +13 app/views/admin/groups/edit.html.haml
-badd +15 app/models/group.rb
+badd +26 app/sweepers/group_sweeper.rb
+badd +26 app/sweepers/imijit_sweeper.rb
+badd +16 app/controllers/groups_controller.rb
+badd +10 app/controllers/application.rb
+badd +0 app/sweepers/image_sweeper.rb
+badd +62 app/controllers/images_controller.rb
+badd +0 app/views/images/show.html.haml
 silent! argdel *
-edit app/controllers/admin/groups_controller.rb
+edit app/controllers/images_controller.rb
 set splitbelow splitright
 wincmd _ | wincmd |
 split
@@ -97,6 +74,21 @@ exe 'vert 3resize ' . ((&columns * 70 + 70) / 141)
 exe '4resize ' . ((&lines * 22 + 24) / 48)
 exe 'vert 4resize ' . ((&columns * 70 + 70) / 141)
 argglobal
+let s:cpo_save=&cpo
+set cpo&vim
+nmap <buffer> gf <Plug>RailsTabFind
+nmap <buffer> f <Plug>RailsSplitFind
+nmap <buffer> [f <Plug>RailsAlternate
+nmap <buffer> ]f <Plug>RailsRelated
+nmap <buffer> gf <Plug>RailsFind
+nnoremap <buffer> <silent> <Plug>RailsTabFind :RTfind
+nnoremap <buffer> <silent> <Plug>RailsVSplitFind :RVfind
+nnoremap <buffer> <silent> <Plug>RailsSplitFind :RSfind
+nnoremap <buffer> <silent> <Plug>RailsFind :REfind
+nnoremap <buffer> <silent> <Plug>RailsRelated :R
+nnoremap <buffer> <silent> <Plug>RailsAlternate :A
+let &cpo=s:cpo_save
+unlet s:cpo_save
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -112,15 +104,15 @@ setlocal cinwords=if,else,while,do,for,switch
 setlocal comments=:#
 setlocal commentstring=#\ %s
 setlocal complete=.,w,b,u,t,i
-setlocal completefunc=
+setlocal completefunc=syntaxcomplete#Complete
 setlocal nocopyindent
 setlocal nocursorcolumn
 setlocal nocursorline
-setlocal define=^\\s*#\\s*define
+setlocal define=^\\s*def\\s\\+\\(self\\.\\)\\=
 setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
-setlocal errorformat=
+setlocal errorformat=%D(in\\\ %f),%A\\\ %\\\\+%\\\\d%\\\\+)\\\ Failure:,%A\\\ %\\\\+%\\\\d%\\\\+)\\\ Error:,%+A'%.%#'\\\ FAILED,%C%.%#(eval)%.%#,%C-e:%.%#,%C%.%#/lib/gems/%\\\\d.%\\\\d/gems/%.%#,%C%.%#/lib/ruby/%\\\\d.%\\\\d/%.%#,%C%.%#/vendor/rails/%.%#,%C\\\ %\\\\+On\\\ line\\\ #%l\\\ of\\\ %f,%CActionView::TemplateError:\\\ compile\\\ error,%Ctest_%.%#(%.%#):%#,%C%.%#\\\ [%f:%l]:,%C\\\ \\\ \\\ \\\ [%f:%l:%.%#,%C\\\ \\\ \\\ \\\ %f:%l:%.%#,%C\\\ \\\ \\\ \\\ \\\ %f:%l:%.%#]:,%C\\\ \\\ \\\ \\\ \\\ %f:%l:%.%#,%Z%f:%l:\\\ %#%m,%Z%f:%l:,%C%m,%.%#.rb:%\\\\d%\\\\+:in\\\ `load':\\\ %f:%l:\\\ syntax\\\ error\\\\\\,\ %m,%.%#.rb:%\\\\d%\\\\+:in\\\ `load':\\\ %f:%l:\\\ %m,%.%#:in\\\ `require':in\\\ `require':\\\ %f:%l:\\\ syntax\\\ error\\\\\\,\ %m,%.%#:in\\\ `require':in\\\ `require':\\\ %f:%l:\\\ %m,%-G%.%#/lib/gems/%\\\\d.%\\\\d/gems/%.%#,%-G%.%#/lib/ruby/%\\\\d.%\\\\d/%.%#,%-G%.%#/vendor/rails/%.%#,%-G%.%#%\\\\d%\\\\d:%\\\\d%\\\\d:%\\\\d%\\\\d%.%#,%-G%\\\\s%#from\\\ %.%#,%f:%l:\\\ %#%m,%-G%.%#
 setlocal expandtab
 if &filetype != 'ruby'
 setlocal filetype=ruby
@@ -142,7 +134,7 @@ setlocal grepprg=
 setlocal iminsert=0
 setlocal imsearch=2
 setlocal include=^\\s*\\<\\(load\\|w*require\\)\\>
-setlocal includeexpr=substitute(substitute(v:fname,'::','/','g'),'$','.rb','')
+setlocal includeexpr=RailsIncludeexpr()
 setlocal indentexpr=GetRubyIndent()
 setlocal indentkeys=0{,0},0),0],!^F,o,O,e,=end,=elsif,=when,=ensure,=rescue,==begin,==end
 setlocal noinfercase
@@ -151,7 +143,7 @@ setlocal keywordprg=ri\ -T
 setlocal nolinebreak
 setlocal nolisp
 setlocal nolist
-setlocal makeprg=
+setlocal makeprg=rake
 setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
@@ -159,7 +151,7 @@ setlocal nrformats=octal,hex
 setlocal nonumber
 setlocal numberwidth=4
 setlocal omnifunc=rubycomplete#Complete
-setlocal path=.,/usr/local/lib/site_ruby/1.8,/usr/local/lib/site_ruby/1.8/i486-linux,/usr/local/lib/site_ruby/1.8/i386-linux,/usr/local/lib/site_ruby,/usr/lib/ruby/1.8,/usr/lib/ruby/1.8/i486-linux,/usr/lib/ruby/1.8/i386-linux,,/usr/lib/ruby/gems/1.8/gems/VimMate-0.6.6/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/actionpack-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/actionpack-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/activerecord-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/activerecord-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/activeresource-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/activeresource-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/activesupport-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/activesupport-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/english-0.2.0/lib,/usr/lib/ruby/gems/1.8/gems/facets-2.4.3/lib/core,/usr/lib/ruby/gems/1.8/gems/facets-2.4.3/lib/lore,/usr/lib/ruby/gems/1.8/gems/facets-2.4.3/lib/more,/usr/lib/ruby/gems/1.8/gems/facets-2.4.4/lib/core,/usr/l
+setlocal path=.,~/Rails/imijit,~/Rails/imijit/app,~/Rails/imijit/app/models,~/Rails/imijit/app/controllers,~/Rails/imijit/app/helpers,~/Rails/imijit/config,~/Rails/imijit/lib,~/Rails/imijit/app/views,~/Rails/imijit/app/views/images,~/Rails/imijit/public,~/Rails/imijit/test,~/Rails/imijit/test/unit,~/Rails/imijit/test/functional,~/Rails/imijit/test/integration,~/Rails/imijit/app/*,~/Rails/imijit/vendor,~/Rails/imijit/vendor/plugins/*/lib,~/Rails/imijit/vendor/plugins/*/test,~/Rails/imijit/vendor/rails/*/lib,~/Rails/imijit/vendor/rails/*/test,/usr/local/lib/site_ruby/1.8,/usr/local/lib/site_ruby/1.8/i486-linux,/usr/local/lib/site_ruby/1.8/i386-linux,/usr/local/lib/site_ruby,/usr/lib/ruby/vendor_ruby/1.8,/usr/lib/ruby/vendor_ruby/1.8/i486-linux,/usr/lib/ruby/vendor_ruby,/usr/lib/ruby/1.8,/usr/lib/ruby/1.8/i486-linux,/usr/lib/ruby/1.8/i386-linux,,/usr/lib/ruby/gems/1.8/gems/VimMate-0.6.6/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/action
 setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
@@ -175,15 +167,15 @@ setlocal nospell
 setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=
 setlocal spelllang=en
-setlocal statusline=
-setlocal suffixesadd=.rb
+setlocal statusline=%<%f\ %h%m%r%{RailsStatusline()}%=%-16(\ %l,%c-%v\ %)%P
+setlocal suffixesadd=.rb,.rhtml,.erb,.rxml,.builder,.rjs,.mab,.liquid,.haml,.dryml,.mn,.yml,.csv,.rake,s.rb
 setlocal swapfile
 setlocal synmaxcol=3000
 if &syntax != 'ruby'
 setlocal syntax=ruby
 endif
 setlocal tabstop=8
-setlocal tags=
+setlocal tags=~/Rails/imijit/tmp/tags,./tags,./TAGS,tags,TAGS,~/Rails/imijit/tags
 setlocal textwidth=0
 setlocal thesaurus=
 setlocal nowinfixheight
@@ -191,15 +183,30 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 4 - ((3 * winheight(0) + 11) / 23)
+let s:l = 69 - ((16 * winheight(0) + 11) / 23)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-4
-normal! 072l
+69
+normal! 04l
 wincmd w
 argglobal
-edit app/views/admin/groups/index.html.haml
+edit app/views/images/show.html.haml
+let s:cpo_save=&cpo
+set cpo&vim
+nmap <buffer> gf <Plug>RailsTabFind
+nmap <buffer> f <Plug>RailsSplitFind
+nmap <buffer> [f <Plug>RailsAlternate
+nmap <buffer> ]f <Plug>RailsRelated
+nmap <buffer> gf <Plug>RailsFind
+nnoremap <buffer> <silent> <Plug>RailsTabFind :RTfind
+nnoremap <buffer> <silent> <Plug>RailsVSplitFind :RVfind
+nnoremap <buffer> <silent> <Plug>RailsSplitFind :RSfind
+nnoremap <buffer> <silent> <Plug>RailsFind :REfind
+nnoremap <buffer> <silent> <Plug>RailsRelated :R
+nnoremap <buffer> <silent> <Plug>RailsAlternate :A
+let &cpo=s:cpo_save
+unlet s:cpo_save
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -215,7 +222,7 @@ setlocal cinwords=if,else,while,do,for,switch
 setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
 setlocal commentstring=/*%s*/
 setlocal complete=.,w,b,u,t,i
-setlocal completefunc=
+setlocal completefunc=syntaxcomplete#Complete
 setlocal nocopyindent
 setlocal nocursorcolumn
 setlocal nocursorline
@@ -223,7 +230,7 @@ setlocal define=
 setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
-setlocal errorformat=
+setlocal errorformat=%D(in\\\ %f),%A\\\ %\\\\+%\\\\d%\\\\+)\\\ Failure:,%A\\\ %\\\\+%\\\\d%\\\\+)\\\ Error:,%+A'%.%#'\\\ FAILED,%C%.%#(eval)%.%#,%C-e:%.%#,%C%.%#/lib/gems/%\\\\d.%\\\\d/gems/%.%#,%C%.%#/lib/ruby/%\\\\d.%\\\\d/%.%#,%C%.%#/vendor/rails/%.%#,%C\\\ %\\\\+On\\\ line\\\ #%l\\\ of\\\ %f,%CActionView::TemplateError:\\\ compile\\\ error,%Ctest_%.%#(%.%#):%#,%C%.%#\\\ [%f:%l]:,%C\\\ \\\ \\\ \\\ [%f:%l:%.%#,%C\\\ \\\ \\\ \\\ %f:%l:%.%#,%C\\\ \\\ \\\ \\\ \\\ %f:%l:%.%#]:,%C\\\ \\\ \\\ \\\ \\\ %f:%l:%.%#,%Z%f:%l:\\\ %#%m,%Z%f:%l:,%C%m,%.%#.rb:%\\\\d%\\\\+:in\\\ `load':\\\ %f:%l:\\\ syntax\\\ error\\\\\\,\ %m,%.%#.rb:%\\\\d%\\\\+:in\\\ `load':\\\ %f:%l:\\\ %m,%.%#:in\\\ `require':in\\\ `require':\\\ %f:%l:\\\ syntax\\\ error\\\\\\,\ %m,%.%#:in\\\ `require':in\\\ `require':\\\ %f:%l:\\\ %m,%-G%.%#/lib/gems/%\\\\d.%\\\\d/gems/%.%#,%-G%.%#/lib/ruby/%\\\\d.%\\\\d/%.%#,%-G%.%#/vendor/rails/%.%#,%-G%.%#%\\\\d%\\\\d:%\\\\d%\\\\d:%\\\\d%\\\\d%.%#,%-G%\\\\s%#from\\\ %.%#,%f:%l:\\\ %#%m,%-G%.%#
 setlocal expandtab
 if &filetype != 'haml'
 setlocal filetype=haml
@@ -242,19 +249,19 @@ setlocal formatexpr=
 setlocal formatoptions=tcq
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
-setlocal iminsert=0
+setlocal iminsert=2
 setlocal imsearch=2
 setlocal include=
-setlocal includeexpr=
+setlocal includeexpr=RailsIncludeexpr()
 setlocal indentexpr=
 setlocal indentkeys=0{,0},:,0#,!^F,o,O,e
 setlocal noinfercase
-setlocal iskeyword=@,48-57,_,192-255
+setlocal iskeyword=@,48-57,_,192-255,$
 setlocal keywordprg=
 setlocal nolinebreak
 setlocal nolisp
 setlocal nolist
-setlocal makeprg=
+setlocal makeprg=rake
 setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
@@ -262,7 +269,7 @@ setlocal nrformats=octal,hex
 setlocal nonumber
 setlocal numberwidth=4
 setlocal omnifunc=
-setlocal path=
+setlocal path=.,~/Rails/imijit,~/Rails/imijit/app,~/Rails/imijit/app/models,~/Rails/imijit/app/controllers,~/Rails/imijit/app/helpers,~/Rails/imijit/config,~/Rails/imijit/lib,~/Rails/imijit/app/views,~/Rails/imijit/app/views/images,~/Rails/imijit/public,~/Rails/imijit/test,~/Rails/imijit/test/unit,~/Rails/imijit/test/functional,~/Rails/imijit/test/integration,~/Rails/imijit/app/*,~/Rails/imijit/vendor,~/Rails/imijit/vendor/plugins/*/lib,~/Rails/imijit/vendor/plugins/*/test,~/Rails/imijit/vendor/rails/*/lib,~/Rails/imijit/vendor/rails/*/test
 setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
@@ -278,15 +285,15 @@ setlocal nospell
 setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=
 setlocal spelllang=en
-setlocal statusline=
-setlocal suffixesadd=
+setlocal statusline=%<%f\ %h%m%r%{RailsStatusline()}%=%-16(\ %l,%c-%v\ %)%P
+setlocal suffixesadd=.rb,.rhtml,.erb,.rxml,.builder,.rjs,.mab,.liquid,.haml,.dryml,.mn,.css,.js,.yml,.csv,.rake,.sql,.html,.xml
 setlocal swapfile
 setlocal synmaxcol=3000
 if &syntax != 'haml'
 setlocal syntax=haml
 endif
 setlocal tabstop=8
-setlocal tags=
+setlocal tags=~/Rails/imijit/tmp/tags,./tags,./TAGS,tags,TAGS,~/Rails/imijit/tags
 setlocal textwidth=0
 setlocal thesaurus=
 setlocal nowinfixheight
@@ -294,118 +301,30 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 5 - ((4 * winheight(0) + 11) / 23)
+let s:l = 24 - ((14 * winheight(0) + 11) / 23)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-5
-normal! 0
+24
+normal! 037l
 wincmd w
 argglobal
-edit public/stylesheets/sass/admin/groups.sass
-setlocal keymap=
-setlocal noarabic
-setlocal autoindent
-setlocal balloonexpr=
-setlocal nobinary
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal nocindent
-setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinwords=if,else,while,do,for,switch
-setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
-setlocal commentstring=/*%s*/
-setlocal complete=.,w,b,u,t,i
-setlocal completefunc=
-setlocal nocopyindent
-setlocal nocursorcolumn
-setlocal nocursorline
-setlocal define=
-setlocal dictionary=
-setlocal nodiff
-setlocal equalprg=
-setlocal errorformat=
-setlocal expandtab
-if &filetype != 'sass'
-setlocal filetype=sass
-endif
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatoptions=tcq
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=2
-setlocal include=
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},:,0#,!^F,o,O,e
-setlocal noinfercase
-setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal nolinebreak
-setlocal nolisp
-setlocal nolist
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-setlocal nrformats=octal,hex
-setlocal nonumber
-setlocal numberwidth=4
-setlocal omnifunc=
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal shiftwidth=2
-setlocal noshortname
-setlocal nosmartindent
-setlocal softtabstop=2
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal statusline=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != 'sass'
-setlocal syntax=sass
-endif
-setlocal tabstop=8
-setlocal tags=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal nowinfixheight
-setlocal nowinfixwidth
-setlocal wrap
-setlocal wrapmargin=0
-silent! normal! zE
-let s:l = 5 - ((1 * winheight(0) + 11) / 22)
-if s:l < 1 | let s:l = 1 | endif
-exe s:l
-normal! zt
-5
-normal! 019l
-wincmd w
-argglobal
-edit app/controllers/admin/images_controller.rb
+edit app/sweepers/image_sweeper.rb
+let s:cpo_save=&cpo
+set cpo&vim
+nmap <buffer> gf <Plug>RailsTabFind
+nmap <buffer> f <Plug>RailsSplitFind
+nmap <buffer> [f <Plug>RailsAlternate
+nmap <buffer> ]f <Plug>RailsRelated
+nmap <buffer> gf <Plug>RailsFind
+nnoremap <buffer> <silent> <Plug>RailsTabFind :RTfind
+nnoremap <buffer> <silent> <Plug>RailsVSplitFind :RVfind
+nnoremap <buffer> <silent> <Plug>RailsSplitFind :RSfind
+nnoremap <buffer> <silent> <Plug>RailsFind :REfind
+nnoremap <buffer> <silent> <Plug>RailsRelated :R
+nnoremap <buffer> <silent> <Plug>RailsAlternate :A
+let &cpo=s:cpo_save
+unlet s:cpo_save
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -421,15 +340,15 @@ setlocal cinwords=if,else,while,do,for,switch
 setlocal comments=:#
 setlocal commentstring=#\ %s
 setlocal complete=.,w,b,u,t,i
-setlocal completefunc=
+setlocal completefunc=syntaxcomplete#Complete
 setlocal nocopyindent
 setlocal nocursorcolumn
 setlocal nocursorline
-setlocal define=^\\s*#\\s*define
+setlocal define=^\\s*def\\s\\+\\(self\\.\\)\\=
 setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
-setlocal errorformat=
+setlocal errorformat=%D(in\\\ %f),%A\\\ %\\\\+%\\\\d%\\\\+)\\\ Failure:,%A\\\ %\\\\+%\\\\d%\\\\+)\\\ Error:,%+A'%.%#'\\\ FAILED,%C%.%#(eval)%.%#,%C-e:%.%#,%C%.%#/lib/gems/%\\\\d.%\\\\d/gems/%.%#,%C%.%#/lib/ruby/%\\\\d.%\\\\d/%.%#,%C%.%#/vendor/rails/%.%#,%C\\\ %\\\\+On\\\ line\\\ #%l\\\ of\\\ %f,%CActionView::TemplateError:\\\ compile\\\ error,%Ctest_%.%#(%.%#):%#,%C%.%#\\\ [%f:%l]:,%C\\\ \\\ \\\ \\\ [%f:%l:%.%#,%C\\\ \\\ \\\ \\\ %f:%l:%.%#,%C\\\ \\\ \\\ \\\ \\\ %f:%l:%.%#]:,%C\\\ \\\ \\\ \\\ \\\ %f:%l:%.%#,%Z%f:%l:\\\ %#%m,%Z%f:%l:,%C%m,%.%#.rb:%\\\\d%\\\\+:in\\\ `load':\\\ %f:%l:\\\ syntax\\\ error\\\\\\,\ %m,%.%#.rb:%\\\\d%\\\\+:in\\\ `load':\\\ %f:%l:\\\ %m,%.%#:in\\\ `require':in\\\ `require':\\\ %f:%l:\\\ syntax\\\ error\\\\\\,\ %m,%.%#:in\\\ `require':in\\\ `require':\\\ %f:%l:\\\ %m,%-G%.%#/lib/gems/%\\\\d.%\\\\d/gems/%.%#,%-G%.%#/lib/ruby/%\\\\d.%\\\\d/%.%#,%-G%.%#/vendor/rails/%.%#,%-G%.%#%\\\\d%\\\\d:%\\\\d%\\\\d:%\\\\d%\\\\d%.%#,%-G%\\\\s%#from\\\ %.%#,%f:%l:\\\ %#%m,%-G%.%#
 setlocal expandtab
 if &filetype != 'ruby'
 setlocal filetype=ruby
@@ -451,7 +370,7 @@ setlocal grepprg=
 setlocal iminsert=0
 setlocal imsearch=2
 setlocal include=^\\s*\\<\\(load\\|w*require\\)\\>
-setlocal includeexpr=substitute(substitute(v:fname,'::','/','g'),'$','.rb','')
+setlocal includeexpr=RailsIncludeexpr()
 setlocal indentexpr=GetRubyIndent()
 setlocal indentkeys=0{,0},0),0],!^F,o,O,e,=end,=elsif,=when,=ensure,=rescue,==begin,==end
 setlocal noinfercase
@@ -460,7 +379,7 @@ setlocal keywordprg=ri\ -T
 setlocal nolinebreak
 setlocal nolisp
 setlocal nolist
-setlocal makeprg=
+setlocal makeprg=rake
 setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
@@ -468,7 +387,7 @@ setlocal nrformats=octal,hex
 setlocal nonumber
 setlocal numberwidth=4
 setlocal omnifunc=rubycomplete#Complete
-setlocal path=.,/usr/local/lib/site_ruby/1.8,/usr/local/lib/site_ruby/1.8/i486-linux,/usr/local/lib/site_ruby/1.8/i386-linux,/usr/local/lib/site_ruby,/usr/lib/ruby/1.8,/usr/lib/ruby/1.8/i486-linux,/usr/lib/ruby/1.8/i386-linux,,/usr/lib/ruby/gems/1.8/gems/VimMate-0.6.6/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/actionpack-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/actionpack-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/activerecord-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/activerecord-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/activeresource-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/activeresource-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/activesupport-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/activesupport-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/english-0.2.0/lib,/usr/lib/ruby/gems/1.8/gems/facets-2.4.3/lib/core,/usr/lib/ruby/gems/1.8/gems/facets-2.4.3/lib/lore,/usr/lib/ruby/gems/1.8/gems/facets-2.4.3/lib/more,/usr/lib/ruby/gems/1.8/gems/facets-2.4.4/lib/core,/usr/l
+setlocal path=.,~/Rails/imijit,~/Rails/imijit/app,~/Rails/imijit/app/models,~/Rails/imijit/app/controllers,~/Rails/imijit/app/helpers,~/Rails/imijit/config,~/Rails/imijit/lib,~/Rails/imijit/app/views,~/Rails/imijit/test,~/Rails/imijit/test/unit,~/Rails/imijit/test/functional,~/Rails/imijit/test/integration,~/Rails/imijit/app/*,~/Rails/imijit/vendor,~/Rails/imijit/vendor/plugins/*/lib,~/Rails/imijit/vendor/plugins/*/test,~/Rails/imijit/vendor/rails/*/lib,~/Rails/imijit/vendor/rails/*/test,/usr/local/lib/site_ruby/1.8,/usr/local/lib/site_ruby/1.8/i486-linux,/usr/local/lib/site_ruby/1.8/i386-linux,/usr/local/lib/site_ruby,/usr/lib/ruby/vendor_ruby/1.8,/usr/lib/ruby/vendor_ruby/1.8/i486-linux,/usr/lib/ruby/vendor_ruby,/usr/lib/ruby/1.8,/usr/lib/ruby/1.8/i486-linux,/usr/lib/ruby/1.8/i386-linux,,/usr/lib/ruby/gems/1.8/gems/VimMate-0.6.6/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.2.2/lib,/usr/lib/ruby/gems/1.8/gems/actionpac
 setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
@@ -484,15 +403,15 @@ setlocal nospell
 setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=
 setlocal spelllang=en
-setlocal statusline=
-setlocal suffixesadd=.rb
+setlocal statusline=%<%f\ %h%m%r%{RailsStatusline()}%=%-16(\ %l,%c-%v\ %)%P
+setlocal suffixesadd=.rb,.rhtml,.erb,.rxml,.builder,.rjs,.mab,.liquid,.haml,.dryml,.mn,.yml,.csv,.rake,s.rb
 setlocal swapfile
 setlocal synmaxcol=3000
 if &syntax != 'ruby'
 setlocal syntax=ruby
 endif
 setlocal tabstop=8
-setlocal tags=
+setlocal tags=~/Rails/imijit/tmp/tags,./tags,./TAGS,tags,TAGS,~/Rails/imijit/tags
 setlocal textwidth=0
 setlocal thesaurus=
 setlocal nowinfixheight
@@ -500,14 +419,132 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 47 - ((12 * winheight(0) + 11) / 22)
+let s:l = 22 - ((21 * winheight(0) + 11) / 22)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-47
-normal! 058l
+22
+normal! 0
 wincmd w
-3wincmd w
+argglobal
+edit app/sweepers/group_sweeper.rb
+let s:cpo_save=&cpo
+set cpo&vim
+nmap <buffer> gf <Plug>RailsTabFind
+nmap <buffer> f <Plug>RailsSplitFind
+nmap <buffer> [f <Plug>RailsAlternate
+nmap <buffer> ]f <Plug>RailsRelated
+nmap <buffer> gf <Plug>RailsFind
+nnoremap <buffer> <silent> <Plug>RailsTabFind :RTfind
+nnoremap <buffer> <silent> <Plug>RailsVSplitFind :RVfind
+nnoremap <buffer> <silent> <Plug>RailsSplitFind :RSfind
+nnoremap <buffer> <silent> <Plug>RailsFind :REfind
+nnoremap <buffer> <silent> <Plug>RailsRelated :R
+nnoremap <buffer> <silent> <Plug>RailsAlternate :A
+let &cpo=s:cpo_save
+unlet s:cpo_save
+setlocal keymap=
+setlocal noarabic
+setlocal autoindent
+setlocal balloonexpr=RubyBalloonexpr()
+setlocal nobinary
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=
+setlocal nocindent
+setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinwords=if,else,while,do,for,switch
+setlocal comments=:#
+setlocal commentstring=#\ %s
+setlocal complete=.,w,b,u,t,i
+setlocal completefunc=syntaxcomplete#Complete
+setlocal nocopyindent
+setlocal nocursorcolumn
+setlocal nocursorline
+setlocal define=^\\s*def\\s\\+\\(self\\.\\)\\=
+setlocal dictionary=
+setlocal nodiff
+setlocal equalprg=
+setlocal errorformat=%D(in\\\ %f),%A\\\ %\\\\+%\\\\d%\\\\+)\\\ Failure:,%A\\\ %\\\\+%\\\\d%\\\\+)\\\ Error:,%+A'%.%#'\\\ FAILED,%C%.%#(eval)%.%#,%C-e:%.%#,%C%.%#/lib/gems/%\\\\d.%\\\\d/gems/%.%#,%C%.%#/lib/ruby/%\\\\d.%\\\\d/%.%#,%C%.%#/vendor/rails/%.%#,%C\\\ %\\\\+On\\\ line\\\ #%l\\\ of\\\ %f,%CActionView::TemplateError:\\\ compile\\\ error,%Ctest_%.%#(%.%#):%#,%C%.%#\\\ [%f:%l]:,%C\\\ \\\ \\\ \\\ [%f:%l:%.%#,%C\\\ \\\ \\\ \\\ %f:%l:%.%#,%C\\\ \\\ \\\ \\\ \\\ %f:%l:%.%#]:,%C\\\ \\\ \\\ \\\ \\\ %f:%l:%.%#,%Z%f:%l:\\\ %#%m,%Z%f:%l:,%C%m,%.%#.rb:%\\\\d%\\\\+:in\\\ `load':\\\ %f:%l:\\\ syntax\\\ error\\\\\\,\ %m,%.%#.rb:%\\\\d%\\\\+:in\\\ `load':\\\ %f:%l:\\\ %m,%.%#:in\\\ `require':in\\\ `require':\\\ %f:%l:\\\ syntax\\\ error\\\\\\,\ %m,%.%#:in\\\ `require':in\\\ `require':\\\ %f:%l:\\\ %m,%-G%.%#/lib/gems/%\\\\d.%\\\\d/gems/%.%#,%-G%.%#/lib/ruby/%\\\\d.%\\\\d/%.%#,%-G%.%#/vendor/rails/%.%#,%-G%.%#%\\\\d%\\\\d:%\\\\d%\\\\d:%\\\\d%\\\\d%.%#,%-G%\\\\s%#from\\\ %.%#,%f:%l:\\\ %#%m,%-G%.%#
+setlocal expandtab
+if &filetype != 'ruby'
+setlocal filetype=ruby
+endif
+setlocal foldcolumn=0
+setlocal foldenable
+setlocal foldexpr=0
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldmarker={{{,}}}
+setlocal foldmethod=manual
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatoptions=croql
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=2
+setlocal include=^\\s*\\<\\(load\\|w*require\\)\\>
+setlocal includeexpr=RailsIncludeexpr()
+setlocal indentexpr=GetRubyIndent()
+setlocal indentkeys=0{,0},0),0],!^F,o,O,e,=end,=elsif,=when,=ensure,=rescue,==begin,==end
+setlocal noinfercase
+setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=ri\ -T
+setlocal nolinebreak
+setlocal nolisp
+setlocal nolist
+setlocal makeprg=rake
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal modifiable
+setlocal nrformats=octal,hex
+setlocal nonumber
+setlocal numberwidth=4
+setlocal omnifunc=rubycomplete#Complete
+setlocal path=.,~/Rails/imijit,~/Rails/imijit/app,~/Rails/imijit/app/models,~/Rails/imijit/app/controllers,~/Rails/imijit/app/helpers,~/Rails/imijit/config,~/Rails/imijit/lib,~/Rails/imijit/app/views,~/Rails/imijit/test,~/Rails/imijit/test/unit,~/Rails/imijit/test/functional,~/Rails/imijit/test/integration,~/Rails/imijit/app/*,~/Rails/imijit/vendor,~/Rails/imijit/vendor/plugins/*/lib,~/Rails/imijit/vendor/plugins/*/test,~/Rails/imijit/vendor/rails/*/lib,~/Rails/imijit/vendor/rails/*/test,/usr/local/lib/site_ruby/1.8,/usr/local/lib/site_ruby/1.8/i486-linux,/usr/local/lib/site_ruby/1.8/i386-linux,/usr/local/lib/site_ruby,/usr/lib/ruby/vendor_ruby/1.8,/usr/lib/ruby/vendor_ruby/1.8/i486-linux,/usr/lib/ruby/vendor_ruby,/usr/lib/ruby/1.8,/usr/lib/ruby/1.8/i486-linux,/usr/lib/ruby/1.8/i386-linux,,/usr/lib/ruby/gems/1.8/gems/VimMate-0.6.6/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.1.0/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.1.1/lib,/usr/lib/ruby/gems/1.8/gems/actionmailer-2.2.2/lib,/usr/lib/ruby/gems/1.8/gems/actionpac
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal shiftwidth=2
+setlocal noshortname
+setlocal nosmartindent
+setlocal softtabstop=2
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal statusline=%<%f\ %h%m%r%{RailsStatusline()}%=%-16(\ %l,%c-%v\ %)%P
+setlocal suffixesadd=.rb,.rhtml,.erb,.rxml,.builder,.rjs,.mab,.liquid,.haml,.dryml,.mn,.yml,.csv,.rake,s.rb
+setlocal swapfile
+setlocal synmaxcol=3000
+if &syntax != 'ruby'
+setlocal syntax=ruby
+endif
+setlocal tabstop=8
+setlocal tags=~/Rails/imijit/tmp/tags,./tags,./TAGS,tags,TAGS,~/Rails/imijit/tags
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal nowinfixheight
+setlocal nowinfixwidth
+setlocal wrap
+setlocal wrapmargin=0
+silent! normal! zE
+let s:l = 26 - ((13 * winheight(0) + 11) / 22)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+26
+normal! 0103l
+wincmd w
+4wincmd w
 exe '1resize ' . ((&lines * 23 + 24) / 48)
 exe 'vert 1resize ' . ((&columns * 70 + 70) / 141)
 exe '2resize ' . ((&lines * 23 + 24) / 48)

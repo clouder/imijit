@@ -2,7 +2,15 @@
   = stylesheet_link_tag 'groups'
 
 %h2 Groups
+
 %ul#groups
   - for group in @groups
     %li[group]
-      = link_to_group group
+      %h3= link_to group.name, group_image_url(group, group.images.first || 0), :title => group.name
+      = image_link_to_group group
+      - if is_authorized?
+        = link_to 'Remove', group, :method => :delete, :class => 'group_link'
+
+- if is_authorized?
+  %h2
+    = link_to 'Add Group', new_group_url, :id => 'new_group_link'

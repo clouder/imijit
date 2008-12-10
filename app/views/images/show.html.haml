@@ -1,20 +1,24 @@
--#- content_for :javascripts do
--#  = javascript_include_tag 'jcrop/jquery.Jcrop.min.js', 'crop_image.js'
--#- content_for :stylesheets do
--#  = stylesheet_link_tag 'jcrop/jquery.Jcrop.css'
--#
--#= image_tag @image.url, :id => 'jcropper'
--#- form_for [@group, @image] do |f|
--#  = f.text_field :geometry
--#  = f.submit 'Update'
 - content_for :stylesheets do
-  = stylesheet_link_tag 'groups'
+  = stylesheet_link_tag 'images'
 
 %h2= @group.name
+- if is_authorized?
+  %p#change_group_name= link_to 'change group name', [:edit, @group]
 
-#main= main_image @group
+#main_image
+  - if is_authorized?
+    %ul.controls
+      %li
+        = link_to 'Add Image', new_group_image_url(@group)
+      %li
+        = link_to_if @image, 'Change Thumbnail', [:edit, @group, @image]
+      %li
+        = link_to_if @image, 'Remove', [@group, @image], :method => 'delete'
+  = image_tag image?(@image)
 
 %ul#images
   - for image in @group.images
     %li[image]
       = link_to image_tag(image.url('thumb')), group_image_url(@group, image)
+      - if is_authorized?
+        = link_to 'Remove', [@group, image], :method => 'delete'

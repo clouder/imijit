@@ -1,15 +1,15 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :groups do |groups|
-    groups.resources :images
+  map.resources :groups do |group|
+    group.resources :images
   end
 
-  map.namespace :admin do |admin|
-    admin.resources :groups do |group|
-      group.resources :images
-    end
+  #map.namespace :admin do |admin|
+  #  admin.resources :groups do |group|
+  #    group.resources :images
+  #  end
 
-    admin.root :controller => 'groups', :action => 'index'
-  end
+  #  admin.root :controller => 'groups', :action => 'index'
+  #end
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:

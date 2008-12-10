@@ -1,9 +1,20 @@
 - content_for :stylesheets do
-  = stylesheet_link_tag 'groups'
+  = stylesheet_link_tag 'images'
 
 %h2= @group.name
 
-#main= main_image @group
+#main_image
+  - if @image
+    %ul.controls
+      %li
+        = link_to 'Rethumb', '#'
+      %li
+        = link_to 'Change Image', '#'
+      %li
+        = link_to 'Remove', [@group, @image], :method => 'delete'
+      %li
+        = link_to 'Add Image', new_group_image_url(@group)
+  = image_tag image?(@image)
 
 %ul#images
   - for image in @group.images

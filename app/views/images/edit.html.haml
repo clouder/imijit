@@ -1,12 +1,12 @@
 - content_for :stylesheets do
-  = stylesheet_link_tag 'admin/images', 'jcrop/jquery.Jcrop'
+  = stylesheet_link_tag 'images', 'jcrop/jquery.Jcrop'
 
 - content_for :javascripts do
   = javascript_include_tag 'jcrop/jquery.Jcrop.min', 'jcrop/jquery.Jcrop.pack', 'crop_image.js'
 
 %h2 Change Image Thumbnail
 
-- form_for [:admin, @group, @image] do |f|
+- form_for [@group, @image] do |f|
   = f.hidden_field :geometry
   %ul
     %li

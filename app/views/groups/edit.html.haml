@@ -1,9 +1,6 @@
-- content_for :stylesheets do
-  = stylesheet_link_tag 'admin/groups'
-
 %h2== Updating #{@group.name}
 
-- form_for [:admin, @group] do |f|
+- form_for @group do |f|
   %ul
     %li
       = f.label :name
