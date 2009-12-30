@@ -49,7 +49,7 @@ class GroupsController < ApplicationController
 
     respond_to do |f|
       if @group.update_attributes(params[:group])
-        f.html { redirect_to group_image_url(@group, @group.images.first) }
+        f.html { redirect_to group_images_url(@group) }
       else
         raise 'that update failed'
       end

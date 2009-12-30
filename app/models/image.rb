@@ -2,7 +2,6 @@ class Image < ActiveRecord::Base
   belongs_to :group
   after_validation_on_create :set_filename
   after_create :make_images
-  after_destroy :remove_images
   after_update :make_thumbnail
   
   validates_associated :group

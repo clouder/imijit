@@ -1,0 +1,9 @@
+%h2 Login
+- form_for @user_session, :url => user_session_path do |f|
+  %ul
+    %li= f.error_messages
+    %li= f.label :login
+    %li= f.text_field :login
+    %li= f.label :password
+    %li= f.password_field :password
+    %li= f.submit "Login"

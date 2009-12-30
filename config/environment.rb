@@ -12,7 +12,6 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
   config.action_controller.page_cache_directory = RAILS_ROOT + '/public/cache/'
-  config.load_paths += %W( #{RAILS_ROOT}/app/sweepers )
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
@@ -27,7 +26,9 @@ Rails::Initializer.run do |config|
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
-  config.gem "haml"
+  config.gem 'haml'
+  config.gem 'thoughtbot-shoulda', :lib => 'shoulda/rails'
+  config.gem 'authlogic'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -36,6 +37,7 @@ Rails::Initializer.run do |config|
 
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
+  config.load_paths += %W( #{RAILS_ROOT}/app/sweepers )
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug)
