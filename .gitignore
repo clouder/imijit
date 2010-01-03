@@ -4,3 +4,4 @@ tmp/**/*
 public/images/**/*
 public/cache/*
 Session.vim
+.project
